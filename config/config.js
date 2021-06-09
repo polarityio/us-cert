@@ -1,5 +1,4 @@
 module.exports = {
-  logging: { level: 'info' },
   /**
    * Name of the integration which is displayed in the Polarity integrations user interface
    *
@@ -23,10 +22,9 @@ module.exports = {
    * @type String
    * @optional
    */
-  description:
-    "Searches DHS CISA's US-CERT website and provides links to relevant results",
-    entityTypes: ['hash','ip','domain','cve','email'],
-    customTypes:[
+  description: "Searches DHS CISA's US-CERT website and provides links to relevant results",
+  entityTypes: ['hash', 'ip', 'domain', 'cve', 'email'],
+  customTypes: [
     {
       key: 'all text',
       regex: /^[\s\S]{2,2048}$/
@@ -92,9 +90,8 @@ module.exports = {
     },
     {
       key: 'fuzzymatch',
-      name: "Fuzzy Match",
-      description:
-        "When checked, finds results that are not an exact match." ,
+      name: 'Fuzzy Match',
+      description: 'When checked, finds results that are not an exact match.',
       default: false,
       type: 'boolean',
       userCanEdit: true,

@@ -47,33 +47,30 @@ function startup(logger) {
 }
 
 function _createQuery(entity, searchFilters, options) {
-  let query ="";
-  if (entity.isIPv4){
+  let query = '';
+  if (entity.isIPv4) {
     //defang IP because that is how it is searchable on CISA website
-    query = `${entity.value} OR "${entity.value.replace(new RegExp(/(\.)\d+$/),'[.]')}"`;
-  }
+    query = `${entity.value} OR "${entity.value.replace(new RegExp(/(\.)\d+$/), '[.]')}"`;
+  } else {
   /*else if (entity.isEmail){
     //defang IP because that is how it is searchable on CISA website
     query = `"${entity.value.replace('@','[@]')}"`;
   }*/
-  else
-  {
-    if (options.fuzzymatch){
+    if (options.fuzzymatch) {
       //replace = sign because google will treat this as its own entity
-      query = `${entity.value.replace('=',' ')}`;
-    }
-    else{
+      query = `${entity.value.replace('=', ' ')}`;
+    } else {
       //replace = sign because google will treat this as its own entity
-      query = `"${entity.value.replace('=',' ')}"`;
+      query = `"${entity.value.replace('=', ' ')}"`;
     }
   }
   searchFilters.forEach((filter) => {
-    //if (filter.value === true) {
-      query += ` site:${filter} OR `;
-    //}
+    if (filter.value === undefined || filter.value) {
+      query += ` site:${filter.filterValue || filter} OR `;
+    }
   });
   //Remove trailing OR
-  query = query.replace(/ OR $/,"");
+  query = query.replace(/ OR $/, '');
 
   return query;
 }
@@ -92,7 +89,10 @@ function _searchEntity(entity, searchFilters, options, cb) {
     json: true
   };
 
-  Logger.trace({ requestOptions }, 'Request Options');
+  Logger.trace(
+    { test: 111111111, requestOptions, entity, searchFilters, options },
+    'Request Options'
+  );
 
   requestWithDefaults(requestOptions, function (error, res, body) {
     let processedResult = handleRestError(error, entity, res, body);
@@ -134,7 +134,6 @@ function doLookup(entities, options, cb) {
   let lookupResults = [];
   let tasks = [];
   const SEARCH_FILTER = options.sources.map((type) => type.value);
-  //const NO_SEARCH_FILTER = [];
 
   Logger.debug({ entities, options }, 'doLookup');
   entities.forEach((entity) => {
@@ -160,8 +159,8 @@ function doLookup(entities, options, cb) {
         lookupResults.push({
           entity: result.entity,
           displayValue: `${result.entity.value.slice(0, 120)}${
-              result.entity.value.length > 120 ? '...' : ''
-            }`,
+            result.entity.value.length > 120 ? '...' : ''
+          }`,
           data: {
             summary: [`${result.body.searchInformation.totalResults} posts`],
             details: _formatDetails(result.body)
@@ -192,9 +191,11 @@ function handleRestError(error, entity, res, body) {
 
   if (res.statusCode === 400) {
     return {
-      error: body.error && body.error.message ? body.error.message : 'There was an error in the request',
+      error:
+        body.error && body.error.message ? body.error.message : 'There was an error in the request',
       statusCode: res ? res.statusCode : 'Unknown',
-      detail: body.error && body.error.message ? body.error.message : 'There was an error in the request'
+      detail:
+        body.error && body.error.message ? body.error.message : 'There was an error in the request'
     };
   }
 
@@ -208,7 +209,10 @@ function handleRestError(error, entity, res, body) {
 
   if (res.statusCode === 403) {
     return {
-      error: body.error && body.error.message ? body.error.message : 'The request is missing a valid API key.',
+      error:
+        body.error && body.error.message
+          ? body.error.message
+          : 'The request is missing a valid API key.',
       statusCode: res ? res.statusCode : 'Unknown',
       detail: 'The request is missing a valid API key.'
     };

@@ -1,3 +1,5 @@
+const isSourceActive = (value, sources) => !!sources.find((source) => source.value === value);
+
 polarity.export = PolarityComponent.extend({
   // Hides the filter menu by default
   viewFilters: false,
@@ -16,57 +18,62 @@ polarity.export = PolarityComponent.extend({
     this._super(...arguments);
     if (!this.get('block.storage.searchFilters')) {
       this.set('block.storage', {});
+      const sources = this.get('block.userOptions.sources');
+      
       this.set('block.storage.searchFilters', [
         {
           displayValue: 'https://us-cert.cisa.gov/ncas/analysis-reports',
           filterValue: 'https://us-cert.cisa.gov/ncas/analysis-reports',
           id: 'ar-checkbox',
-          value: true
+          value: isSourceActive('https://us-cert.cisa.gov/ncas/analysis-reports', sources)
         },
         {
           displayValue: 'https://us-cert.cisa.gov/ncas/bulletins',
           filterValue: 'https://us-cert.cisa.gov/ncas/bulletins',
           id: 'b-checkbox',
-          value: true
+          value: isSourceActive('https://us-cert.cisa.gov/ncas/bulletins', sources)
         },
         {
           displayValue: 'https://us-cert.cisa.gov/ncas/alerts',
           filterValue: 'https://us-cert.cisa.gov/ncas/alerts',
           id: 'a-checkbox',
-          value: true
+          value: isSourceActive('https://us-cert.cisa.gov/ncas/alerts', sources)
         },
         {
           displayValue: 'https://us-cert.cisa.gov/ncas/current-activity',
           filterValue: 'https://us-cert.cisa.gov/ncas/current-activity',
           id: 'ca-checkbox',
-          value: true
+          value: isSourceActive('https://us-cert.cisa.gov/ncas/current-activity', sources)
         },
         {
           displayValue: 'https://us-cert.cisa.gov/resources',
           filterValue: 'https://us-cert.cisa.gov/resources',
           id: 'r-checkbox',
-          value: true
+          value: isSourceActive('https://us-cert.cisa.gov/resources', sources)
         },
         {
           displayValue: 'https://us-cert.cisa.gov/ics/alerts',
           filterValue: 'https://us-cert.cisa.gov/ics/alerts',
           id: 'icsa-checkbox',
-          value: true
+          value: isSourceActive('https://us-cert.cisa.gov/ics/alerts', sources)
         },
         {
           displayValue: 'https://us-cert.cisa.gov/ics/advisories',
           filterValue: 'https://us-cert.cisa.gov/ics/advisories',
           id: 'icsad-checkbox',
-          value: true
+          value: isSourceActive('https://us-cert.cisa.gov/ics/advisories', sources)
         },
         {
           displayValue: 'https://us-cert.cisa.gov/ics/Other-Reports',
           filterValue: 'https://us-cert.cisa.gov/ics/Other-Reports',
           id: 'icsor-checkbox',
-          value: true
+          value: isSourceActive('https://us-cert.cisa.gov/ics/Other-Reports', sources)
         }
       ]);
-      this.set('block.storage.numSourcesToSearch', this.get('block.storage.searchFilters.length'));
+      this.set(
+        'block.storage.numSourcesToSearch',
+        this.get('block.storage.searchFilters').filter(({ value }) => value).length
+      );
     }
   },
   actions: {
@@ -85,7 +92,7 @@ polarity.export = PolarityComponent.extend({
       this.set('filtering', true);
       const payload = {
         entity: this.block.entity,
-        searchFilters: this.searchFilters
+        searchFilters: this.get('searchFilters')
       };
 
       this.sendIntegrationMessage(payload)

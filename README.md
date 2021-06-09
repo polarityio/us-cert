@@ -2,10 +2,9 @@
 
 The Polarity USCert integration uses the Google search API to search for indicators all throughout USCerts website.
 
-
-| ![image](assets/overlay.png)  | 
-|---|
-|*USCert example* | 
+<div style="display:flex; justify-content:flex-start; align-items:flex-start; padding-bottom: 15px;">
+  <img width="400" alt="Integration Example Overlay" src="./assets/overlay.png">
+</div>
 
 ## USCert Integration Options
 
