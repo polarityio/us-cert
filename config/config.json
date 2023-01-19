@@ -1,0 +1,134 @@
+{
+  "name": "US-CERT",
+  "acronym": "US-CERT",
+  "description": "Searches DHS CISA's US-CERT website and provides links to relevant results",
+  "entityTypes": [
+    "hash",
+    "domain",
+    "cve",
+    "email"
+  ],
+  "customTypes": [
+    {
+      "key": "all text",
+      "regex": "^[\\s\\S]{2,2048}$"
+    }
+  ],
+  "defaultColor": "light-pink",
+  "styles": [
+    "./styles/style.less"
+  ],
+  "block": {
+    "component": {
+      "file": "./components/block.js"
+    },
+    "template": {
+      "file": "./templates/block.hbs"
+    }
+  },
+  "request": {
+    "cert": "",
+    "key": "",
+    "passphrase": "",
+    "ca": "",
+    "proxy": "",
+    "rejectUnauthorized": true
+  },
+  "logging": {
+    "level": "info"
+  },
+  "onDemandOnly": true,
+  "options": [
+    {
+      "key": "apiKey",
+      "name": "API Key",
+      "description": "Valid Google CSE API Key",
+      "default": "",
+      "type": "password",
+      "userCanEdit": false,
+      "adminOnly": true
+    },
+    {
+      "key": "fuzzymatch",
+      "name": "Fuzzy Match",
+      "description": "When checked, finds results that are not an exact match.",
+      "default": false,
+      "type": "boolean",
+      "userCanEdit": true,
+      "adminOnly": false
+    },
+    {
+      "key": "sources",
+      "name": "Sources to Search",
+      "description": "Choose sources to search",
+      "default": [
+        {
+          "value": "https://us-cert.cisa.gov/ncas/analysis-reports",
+          "display": "ncas/analysis-reports"
+        },
+        {
+          "value": "https://us-cert.cisa.gov/ncas/bulletins",
+          "display": "ncas/bulletins"
+        },
+        {
+          "value": "https://us-cert.cisa.gov/ncas/alerts",
+          "display": "ncas/alerts"
+        },
+        {
+          "value": "https://us-cert.cisa.gov/ncas/current-activity",
+          "display": "ncas/current-activity"
+        },
+        {
+          "value": "https://us-cert.cisa.gov/ics/alerts",
+          "display": "ics/alerts"
+        },
+        {
+          "value": "https://us-cert.cisa.gov/ics/advisories",
+          "display": "ics/advisories"
+        },
+        {
+          "value": "https://us-cert.cisa.gov/ics/Other-Reports",
+          "display": "ics/Other-Reports"
+        }
+      ],
+      "type": "select",
+      "options": [
+        {
+          "value": "https://us-cert.cisa.gov/ncas/analysis-reports",
+          "display": "ncas/analysis-reports"
+        },
+        {
+          "value": "https://us-cert.cisa.gov/ncas/bulletins",
+          "display": "ncas/bulletins"
+        },
+        {
+          "value": "https://us-cert.cisa.gov/ncas/alerts",
+          "display": "ncas/alerts"
+        },
+        {
+          "value": "https://us-cert.cisa.gov/ncas/current-activity",
+          "display": "ncas/current-activity"
+        },
+        {
+          "value": "https://us-cert.cisa.gov/resources",
+          "display": "resources"
+        },
+        {
+          "value": "https://us-cert.cisa.gov/ics/alerts",
+          "display": "ics/alerts"
+        },
+        {
+          "value": "https://us-cert.cisa.gov/ics/advisories",
+          "display": "ics/advisories"
+        },
+        {
+          "value": "https://us-cert.cisa.gov/ics/Other-Reports",
+          "display": "ics/Other-Reports"
+        }
+      ],
+      "multiple": true,
+      "userCanEdit": true,
+      "adminOnly": false
+    }
+  ]
+}
