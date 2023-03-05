@@ -16,55 +16,59 @@ polarity.export = PolarityComponent.extend({
   numSourcesToSearch: Ember.computed.alias('block.storage.numSourcesToSearch'),
   init: function () {
     this._super(...arguments);
+
+    let array = new Uint32Array(5);
+    this.set('uniqueIdPrefix', window.crypto.getRandomValues(array).join(''));
+
     if (!this.get('block.storage.searchFilters')) {
       this.set('block.storage', {});
       const sources = this.get('block.userOptions.sources');
-      
+
       this.set('block.storage.searchFilters', [
         {
-          displayValue: 'https://us-cert.cisa.gov/ncas/analysis-reports',
+          displayValue: '/ncas/analysis-reports',
           filterValue: 'https://us-cert.cisa.gov/ncas/analysis-reports',
           id: 'ar-checkbox',
           value: isSourceActive('https://us-cert.cisa.gov/ncas/analysis-reports', sources)
         },
         {
-          displayValue: 'https://us-cert.cisa.gov/ncas/bulletins',
+          displayValue: '/ncas/bulletins',
           filterValue: 'https://us-cert.cisa.gov/ncas/bulletins',
           id: 'b-checkbox',
           value: isSourceActive('https://us-cert.cisa.gov/ncas/bulletins', sources)
         },
         {
-          displayValue: 'https://us-cert.cisa.gov/ncas/alerts',
+          displayValue: '/ncas/alerts',
           filterValue: 'https://us-cert.cisa.gov/ncas/alerts',
           id: 'a-checkbox',
           value: isSourceActive('https://us-cert.cisa.gov/ncas/alerts', sources)
         },
         {
-          displayValue: 'https://us-cert.cisa.gov/ncas/current-activity',
+          displayValue: '/ncas/current-activity',
           filterValue: 'https://us-cert.cisa.gov/ncas/current-activity',
           id: 'ca-checkbox',
           value: isSourceActive('https://us-cert.cisa.gov/ncas/current-activity', sources)
         },
         {
-          displayValue: 'https://us-cert.cisa.gov/resources',
+          displayValue: '/resources',
           filterValue: 'https://us-cert.cisa.gov/resources',
           id: 'r-checkbox',
           value: isSourceActive('https://us-cert.cisa.gov/resources', sources)
         },
         {
-          displayValue: 'https://us-cert.cisa.gov/ics/alerts',
+          displayValue: '/ics/alerts',
           filterValue: 'https://us-cert.cisa.gov/ics/alerts',
           id: 'icsa-checkbox',
           value: isSourceActive('https://us-cert.cisa.gov/ics/alerts', sources)
         },
         {
-          displayValue: 'https://us-cert.cisa.gov/ics/advisories',
+          displayValue: '/ics/advisories',
           filterValue: 'https://us-cert.cisa.gov/ics/advisories',
           id: 'icsad-checkbox',
           value: isSourceActive('https://us-cert.cisa.gov/ics/advisories', sources)
         },
         {
-          displayValue: 'https://us-cert.cisa.gov/ics/Other-Reports',
+          displayValue: '/ics/Other-Reports',
           filterValue: 'https://us-cert.cisa.gov/ics/Other-Reports',
           id: 'icsor-checkbox',
           value: isSourceActive('https://us-cert.cisa.gov/ics/Other-Reports', sources)
@@ -77,6 +81,19 @@ polarity.export = PolarityComponent.extend({
     }
   },
   actions: {
+    copyData: function () {
+      const savedViewLimit = this.get('viewLimit');
+      this.setMaxViewLimit();
+
+      Ember.run.scheduleOnce(
+        'afterRender',
+        this,
+        this.copyElementToClipboard,
+        `us-cert-container-${this.get('uniqueIdPrefix')}`
+      );
+
+      Ember.run.scheduleOnce('destroy', this, this.restoreCopyState, savedViewLimit);
+    },
     toggleFilter: function () {
       this.toggleProperty('viewFilters');
     },
@@ -127,8 +144,11 @@ polarity.export = PolarityComponent.extend({
       }
     },
     viewMore: function () {
-      this.set('viewLimit', 10);
+      this.setMaxViewLimit();
     }
+  },
+  setMaxViewLimit() {
+    this.set('viewLimit', this.get('maxViewLimit'));
   },
   getNumSourcesSearched() {
     let numSourcesToSearch = 0;
@@ -138,5 +158,33 @@ polarity.export = PolarityComponent.extend({
       }
     }
     return numSourcesToSearch;
+  },
+  copyElementToClipboard(element) {
+    let images = document.getElementById(element).getElementsByTagName('img');
+    for (let i = 0; i < images.length; i++) {
+      images[i].style.display = 'none';
+    }
+
+    window.getSelection().removeAllRanges();
+    let range = document.createRange();
+
+    range.selectNode(typeof element === 'string' ? document.getElementById(element) : element);
+    window.getSelection().addRange(range);
+    document.execCommand('copy');
+    window.getSelection().removeAllRanges();
+
+    for (let i = 0; i < images.length; i++) {
+      images[i].style.display = 'block';
+    }
+  },
+  restoreCopyState(savedViewLimit) {
+    this.set('viewLimit', savedViewLimit);
+    this.set('showCopyMessage', true);
+
+    setTimeout(() => {
+      if (!this.isDestroyed) {
+        this.set('showCopyMessage', false);
+      }
+    }, 2000);
   }
 });
