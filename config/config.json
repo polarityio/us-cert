@@ -1,4 +1,5 @@
 {
+  "polarityIntegrationUuid": "0cf0cfa0-ccc7-11ed-bd45-6147db7ef4b1",
   "name": "US-CERT",
   "acronym": "US-CERT",
   "description": "Searches DHS CISA's US-CERT website and provides links to relevant results",
