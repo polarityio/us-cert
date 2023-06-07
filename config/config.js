@@ -26,7 +26,7 @@ module.exports = {
   entityTypes: ['hash', 'ip', 'domain', 'cve', 'email'],
   customTypes: [
     {
-      key: 'all text',
+      key: 'allText',
       regex: /^[\s\S]{2,2048}$/
     }
   ],

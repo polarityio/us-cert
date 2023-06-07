@@ -11,7 +11,7 @@
   ],
   "customTypes": [
     {
-      "key": "all text",
+      "key": "allText",
       "regex": "^[\\s\\S]{2,2048}$"
     }
   ],
