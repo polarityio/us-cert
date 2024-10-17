@@ -3,7 +3,7 @@
   "name": "US-CERT",
   "acronym": "US-CERT",
   "description": "Searches DHS CISA's US-CERT website and provides links to relevant results",
-  "entityTypes": ["MD5", "SHA1", "SHA256", "domain", "cve", "email"],
+  "entityTypes": ["MD5", "SHA1", "SHA256", "IPv4", "IPv6", "domain", "cve", "email"],
   "customTypes": [
     {
       "key": "allText",
